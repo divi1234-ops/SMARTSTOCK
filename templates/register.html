@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6 col-lg-5">
+    <div class="card shadow">
+      <div class="card-header bg-success text-white text-center">
+        <h4 class="mb-0"><i class="bi bi-person-plus"></i> Register New User</h4>
+      </div>
+      <div class="card-body p-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+          {% endfor %}
+        {% endwith %}
+        
+        <form method="post" action="{{ url_for('register') }}">
+          <div class="mb-3">
+            <label for="username" class="form-label">Username <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="username" name="username" required autofocus>
+            <small class="form-text text-muted">Must be unique</small>
+          </div>
+          
+          <div class="mb-3">
+            <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+            <input type="email" class="form-control" id="email" name="email" required>
+            <small class="form-text text-muted">Must be unique</small>
+          </div>
+          
+          <div class="mb-3">
+            <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
+            <input type="password" class="form-control" id="password" name="password" required minlength="4">
+            <small class="form-text text-muted">Minimum 4 characters</small>
+          </div>
+          
+          <div class="mb-3">
+            <label for="role" class="form-label">Role <span class="text-danger">*</span></label>
+            <select class="form-select" id="role" name="role" required>
+              <option value="staff" selected>Staff</option>
+              <option value="admin">Admin</option>
+            </select>
+            <small class="form-text text-muted">Admin has full access, Staff has limited access</small>
+          </div>
+          
+          <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-success">Register User</button>
+            <a href="{{ url_for('users') }}" class="btn btn-outline-secondary">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+

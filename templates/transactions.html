@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container-fluid mt-3">
+
+  <!-- HEADER -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold">
+      <i class="bi bi-clock-history"></i> Transaction History
+    </h2>
+    <a href="/" class="btn btn-outline-secondary btn-sm">← Dashboard</a>
+  </div>
+
+  <!-- EXPORT BUTTONS -->
+  <div class="d-flex gap-2 mb-3">
+    <a href="{{ url_for('export_transactions_csv') }}" class="btn btn-outline-primary btn-sm">
+      <i class="bi bi-file-earmark-spreadsheet"></i> Export CSV
+    </a>
+    <a href="{{ url_for('export_transactions_pdf') }}" class="btn btn-outline-danger btn-sm">
+      <i class="bi bi-file-earmark-pdf"></i> Export PDF
+    </a>
+  </div>
+
+  <!-- TABLE -->
+  <div class="card shadow-sm">
+    <div class="card-header bg-dark text-white">
+      <i class="bi bi-list-ul"></i> All Stock Transactions ({{ pagination.total }})
+    </div>
+
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>ID</th>
+              <th>Product</th>
+              <th>Action</th>
+              <th>Quantity</th>
+              <th>User</th>
+              <th>Timestamp</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for tx in transactions %}
+            <tr>
+              <td>{{ tx.id }}</td>
+              <td>
+                <strong>{{ tx.product.name if tx.product else 'Unknown Product' }}</strong>
+                <br><small class="text-muted">{{ tx.product.category if tx.product and tx.product.category else '' }}</small>
+              </td>
+
+              <td>
+                {% if tx.action == 'purchase' %}
+                  <span class="badge bg-success"><i class="bi bi-arrow-up-circle"></i> Purchase</span>
+                {% else %}
+                  <span class="badge bg-warning text-dark"><i class="bi bi-arrow-down-circle"></i> Used</span>
+                {% endif %}
+              </td>
+
+              <td><strong>{{ tx.quantity }}</strong></td>
+              <td>{{ tx.get_user_name() }}</td>
+              <td><small>{{ tx.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</small></td>
+              <td><small class="text-muted">{{ tx.notes or '-' }}</small></td>
+            </tr>
+
+            {% else %}
+            <tr>
+              <td colspan="7" class="text-center text-muted py-3">
+                No transactions recorded yet.
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    {% if pagination.pages > 1 %}
+    <div class="card-footer">
+      <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center mb-0">
+          <li class="page-item {% if not pagination.has_prev %}disabled{% endif %}">
+            <a class="page-link" href="{{ url_for('transactions', page=pagination.prev_num) }}">Previous</a>
+          </li>
+          {% for page_num in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+            {% if page_num %}
+              {% if page_num == pagination.page %}
+              <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
+              {% else %}
+              <li class="page-item"><a class="page-link" href="{{ url_for('transactions', page=page_num) }}">{{ page_num }}</a></li>
+              {% endif %}
+            {% else %}
+              <li class="page-item disabled"><span class="page-link">…</span></li>
+            {% endif %}
+          {% endfor %}
+          <li class="page-item {% if not pagination.has_next %}disabled{% endif %}">
+            <a class="page-link" href="{{ url_for('transactions', page=pagination.next_num) }}">Next</a>
+          </li>
+        </ul>
+      </nav>
+      <div class="text-center mt-2 text-muted small">
+        Showing {{ pagination.per_page * (pagination.page - 1) + 1 }} to {{ pagination.per_page * (pagination.page - 1) + pagination.items|length }} of {{ pagination.total }} transactions
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

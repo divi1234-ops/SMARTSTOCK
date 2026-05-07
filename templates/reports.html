@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container-fluid mt-3">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold"><i class="bi bi-graph-up"></i> Stock Reports</h2>
+    <a href="/" class="btn btn-outline-secondary btn-sm">← Dashboard</a>
+  </div>
+
+  <!-- STATISTICS CARDS -->
+  <div class="row mb-4">
+    <div class="col-md-4">
+      <div class="card text-center shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title text-primary">Total Products</h5>
+          <h2 class="text-primary">{{ total_products }}</h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-center shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title text-warning">Low Stock Items</h5>
+          <h2 class="text-warning">{{ low_stock_count }}</h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-center shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title text-info">Total Transactions</h5>
+          <h2 class="text-info">{{ total_transactions }}</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXPORT BUTTONS -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-dark text-white">
+      <i class="bi bi-download"></i> Export Reports
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <h6>Products Report</h6>
+          <a href="{{ url_for('export_products_csv') }}" class="btn btn-outline-primary btn-sm me-2">
+            <i class="bi bi-file-earmark-spreadsheet"></i> Export CSV
+          </a>
+          <a href="{{ url_for('export_products_pdf') }}" class="btn btn-outline-danger btn-sm">
+            <i class="bi bi-file-earmark-pdf"></i> Export PDF
+          </a>
+        </div>
+        <div class="col-md-6 mb-3">
+          <h6>Transactions Report</h6>
+          <a href="{{ url_for('export_transactions_csv') }}" class="btn btn-outline-primary btn-sm me-2">
+            <i class="bi bi-file-earmark-spreadsheet"></i> Export CSV
+          </a>
+          <a href="{{ url_for('export_transactions_pdf') }}" class="btn btn-outline-danger btn-sm">
+            <i class="bi bi-file-earmark-pdf"></i> Export PDF
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CATEGORY STATISTICS -->
+  {% if category_stats %}
+  <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+      <i class="bi bi-pie-chart"></i> Statistics by Category
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Number of Products</th>
+              <th>Total Quantity</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for category, count, total_qty in category_stats %}
+            <tr>
+              <td><strong>{{ category or 'Uncategorized' }}</strong></td>
+              <td>{{ count }}</td>
+              <td>{{ total_qty or 0 }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+
